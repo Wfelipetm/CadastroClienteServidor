@@ -1,14 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
 
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,8 +16,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,16 +23,15 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "Pessoa")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pessoa.findAll", query = "SELECT p FROM Pessoa p")
-    , @NamedQuery(name = "Pessoa.findByIdPessoa", query = "SELECT p FROM Pessoa p WHERE p.idPessoa = :idPessoa")
-    , @NamedQuery(name = "Pessoa.findByNome", query = "SELECT p FROM Pessoa p WHERE p.nome = :nome")
-    , @NamedQuery(name = "Pessoa.findByLogradouro", query = "SELECT p FROM Pessoa p WHERE p.logradouro = :logradouro")
-    , @NamedQuery(name = "Pessoa.findByCidade", query = "SELECT p FROM Pessoa p WHERE p.cidade = :cidade")
-    , @NamedQuery(name = "Pessoa.findByEstado", query = "SELECT p FROM Pessoa p WHERE p.estado = :estado")
-    , @NamedQuery(name = "Pessoa.findByTelefone", query = "SELECT p FROM Pessoa p WHERE p.telefone = :telefone")
-    , @NamedQuery(name = "Pessoa.findByEmail", query = "SELECT p FROM Pessoa p WHERE p.email = :email")})
+    @NamedQuery(name = "Pessoa.findAll", query = "SELECT p FROM Pessoa p"),
+    @NamedQuery(name = "Pessoa.findByIdPessoa", query = "SELECT p FROM Pessoa p WHERE p.idPessoa = :idPessoa"),
+    @NamedQuery(name = "Pessoa.findByNome", query = "SELECT p FROM Pessoa p WHERE p.nome = :nome"),
+    @NamedQuery(name = "Pessoa.findByLogradouro", query = "SELECT p FROM Pessoa p WHERE p.logradouro = :logradouro"),
+    @NamedQuery(name = "Pessoa.findByCidade", query = "SELECT p FROM Pessoa p WHERE p.cidade = :cidade"),
+    @NamedQuery(name = "Pessoa.findByEstado", query = "SELECT p FROM Pessoa p WHERE p.estado = :estado"),
+    @NamedQuery(name = "Pessoa.findByTelefone", query = "SELECT p FROM Pessoa p WHERE p.telefone = :telefone"),
+    @NamedQuery(name = "Pessoa.findByEmail", query = "SELECT p FROM Pessoa p WHERE p.email = :email")})
 public class Pessoa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,10 +52,6 @@ public class Pessoa implements Serializable {
     private String telefone;
     @Column(name = "email")
     private String email;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPessoa")
-    private Collection<PessoaJuridica> pessoaJuridicaCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPessoa")
-    private Collection<PessoaFisica> pessoaFisicaCollection;
     @OneToMany(mappedBy = "idPessoa")
     private Collection<Movimentacao> movimentacaoCollection;
 
@@ -127,25 +118,6 @@ public class Pessoa implements Serializable {
         this.email = email;
     }
 
-    @XmlTransient
-    public Collection<PessoaJuridica> getPessoaJuridicaCollection() {
-        return pessoaJuridicaCollection;
-    }
-
-    public void setPessoaJuridicaCollection(Collection<PessoaJuridica> pessoaJuridicaCollection) {
-        this.pessoaJuridicaCollection = pessoaJuridicaCollection;
-    }
-
-    @XmlTransient
-    public Collection<PessoaFisica> getPessoaFisicaCollection() {
-        return pessoaFisicaCollection;
-    }
-
-    public void setPessoaFisicaCollection(Collection<PessoaFisica> pessoaFisicaCollection) {
-        this.pessoaFisicaCollection = pessoaFisicaCollection;
-    }
-
-    @XmlTransient
     public Collection<Movimentacao> getMovimentacaoCollection() {
         return movimentacaoCollection;
     }
@@ -176,7 +148,7 @@ public class Pessoa implements Serializable {
 
     @Override
     public String toString() {
-        return "cadastroserver.Pessoa[ idPessoa=" + idPessoa + " ]";
+        return "model.Pessoa[ idPessoa=" + idPessoa + " ]";
     }
     
 }

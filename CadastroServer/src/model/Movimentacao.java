@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
 import java.io.Serializable;
@@ -12,17 +16,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *
+ * @author wfeli
+ */
 @Entity
 @Table(name = "Movimentacao")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Movimentacao.findAll", query = "SELECT m FROM Movimentacao m")
-    , @NamedQuery(name = "Movimentacao.findByIdMovimento", query = "SELECT m FROM Movimentacao m WHERE m.idMovimento = :idMovimento")
-    , @NamedQuery(name = "Movimentacao.findByQuantidade", query = "SELECT m FROM Movimentacao m WHERE m.quantidade = :quantidade")
-    , @NamedQuery(name = "Movimentacao.findByTipo", query = "SELECT m FROM Movimentacao m WHERE m.tipo = :tipo")
-    , @NamedQuery(name = "Movimentacao.findByValorUnitario", query = "SELECT m FROM Movimentacao m WHERE m.valorUnitario = :valorUnitario")})
+    @NamedQuery(name = "Movimentacao.findAll", query = "SELECT m FROM Movimentacao m"),
+    @NamedQuery(name = "Movimentacao.findByIdMovimento", query = "SELECT m FROM Movimentacao m WHERE m.idMovimento = :idMovimento"),
+    @NamedQuery(name = "Movimentacao.findByQuantidade", query = "SELECT m FROM Movimentacao m WHERE m.quantidade = :quantidade"),
+    @NamedQuery(name = "Movimentacao.findByTipo", query = "SELECT m FROM Movimentacao m WHERE m.tipo = :tipo"),
+    @NamedQuery(name = "Movimentacao.findByValorUnitario", query = "SELECT m FROM Movimentacao m WHERE m.valorUnitario = :valorUnitario")})
 public class Movimentacao implements Serializable {
 
     private static final long serialVersionUID = 1L;

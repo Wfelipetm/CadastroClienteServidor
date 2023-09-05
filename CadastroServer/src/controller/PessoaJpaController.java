@@ -1,25 +1,21 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package controller;
 
-import controller.exceptions.IllegalOrphanException;
 import controller.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import model.PessoaJuridica;
+import model.Movimentacao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import model.PessoaFisica;
-import model.Movimentacao;
 import model.Pessoa;
 
 /**
@@ -38,12 +34,6 @@ public class PessoaJpaController implements Serializable {
     }
 
     public void create(Pessoa pessoa) {
-        if (pessoa.getPessoaJuridicaCollection() == null) {
-            pessoa.setPessoaJuridicaCollection(new ArrayList<PessoaJuridica>());
-        }
-        if (pessoa.getPessoaFisicaCollection() == null) {
-            pessoa.setPessoaFisicaCollection(new ArrayList<PessoaFisica>());
-        }
         if (pessoa.getMovimentacaoCollection() == null) {
             pessoa.setMovimentacaoCollection(new ArrayList<Movimentacao>());
         }
@@ -51,18 +41,6 @@ public class PessoaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<PessoaJuridica> attachedPessoaJuridicaCollection = new ArrayList<PessoaJuridica>();
-            for (PessoaJuridica pessoaJuridicaCollectionPessoaJuridicaToAttach : pessoa.getPessoaJuridicaCollection()) {
-                pessoaJuridicaCollectionPessoaJuridicaToAttach = em.getReference(pessoaJuridicaCollectionPessoaJuridicaToAttach.getClass(), pessoaJuridicaCollectionPessoaJuridicaToAttach.getIdPessoaJuridica());
-                attachedPessoaJuridicaCollection.add(pessoaJuridicaCollectionPessoaJuridicaToAttach);
-            }
-            pessoa.setPessoaJuridicaCollection(attachedPessoaJuridicaCollection);
-            Collection<PessoaFisica> attachedPessoaFisicaCollection = new ArrayList<PessoaFisica>();
-            for (PessoaFisica pessoaFisicaCollectionPessoaFisicaToAttach : pessoa.getPessoaFisicaCollection()) {
-                pessoaFisicaCollectionPessoaFisicaToAttach = em.getReference(pessoaFisicaCollectionPessoaFisicaToAttach.getClass(), pessoaFisicaCollectionPessoaFisicaToAttach.getIdPessoaFisica());
-                attachedPessoaFisicaCollection.add(pessoaFisicaCollectionPessoaFisicaToAttach);
-            }
-            pessoa.setPessoaFisicaCollection(attachedPessoaFisicaCollection);
             Collection<Movimentacao> attachedMovimentacaoCollection = new ArrayList<Movimentacao>();
             for (Movimentacao movimentacaoCollectionMovimentacaoToAttach : pessoa.getMovimentacaoCollection()) {
                 movimentacaoCollectionMovimentacaoToAttach = em.getReference(movimentacaoCollectionMovimentacaoToAttach.getClass(), movimentacaoCollectionMovimentacaoToAttach.getIdMovimento());
@@ -70,24 +48,6 @@ public class PessoaJpaController implements Serializable {
             }
             pessoa.setMovimentacaoCollection(attachedMovimentacaoCollection);
             em.persist(pessoa);
-            for (PessoaJuridica pessoaJuridicaCollectionPessoaJuridica : pessoa.getPessoaJuridicaCollection()) {
-                Pessoa oldIdPessoaOfPessoaJuridicaCollectionPessoaJuridica = pessoaJuridicaCollectionPessoaJuridica.getIdPessoa();
-                pessoaJuridicaCollectionPessoaJuridica.setIdPessoa(pessoa);
-                pessoaJuridicaCollectionPessoaJuridica = em.merge(pessoaJuridicaCollectionPessoaJuridica);
-                if (oldIdPessoaOfPessoaJuridicaCollectionPessoaJuridica != null) {
-                    oldIdPessoaOfPessoaJuridicaCollectionPessoaJuridica.getPessoaJuridicaCollection().remove(pessoaJuridicaCollectionPessoaJuridica);
-                    oldIdPessoaOfPessoaJuridicaCollectionPessoaJuridica = em.merge(oldIdPessoaOfPessoaJuridicaCollectionPessoaJuridica);
-                }
-            }
-            for (PessoaFisica pessoaFisicaCollectionPessoaFisica : pessoa.getPessoaFisicaCollection()) {
-                Pessoa oldIdPessoaOfPessoaFisicaCollectionPessoaFisica = pessoaFisicaCollectionPessoaFisica.getIdPessoa();
-                pessoaFisicaCollectionPessoaFisica.setIdPessoa(pessoa);
-                pessoaFisicaCollectionPessoaFisica = em.merge(pessoaFisicaCollectionPessoaFisica);
-                if (oldIdPessoaOfPessoaFisicaCollectionPessoaFisica != null) {
-                    oldIdPessoaOfPessoaFisicaCollectionPessoaFisica.getPessoaFisicaCollection().remove(pessoaFisicaCollectionPessoaFisica);
-                    oldIdPessoaOfPessoaFisicaCollectionPessoaFisica = em.merge(oldIdPessoaOfPessoaFisicaCollectionPessoaFisica);
-                }
-            }
             for (Movimentacao movimentacaoCollectionMovimentacao : pessoa.getMovimentacaoCollection()) {
                 Pessoa oldIdPessoaOfMovimentacaoCollectionMovimentacao = movimentacaoCollectionMovimentacao.getIdPessoa();
                 movimentacaoCollectionMovimentacao.setIdPessoa(pessoa);
@@ -105,52 +65,14 @@ public class PessoaJpaController implements Serializable {
         }
     }
 
-    public void edit(Pessoa pessoa) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Pessoa pessoa) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Pessoa persistentPessoa = em.find(Pessoa.class, pessoa.getIdPessoa());
-            Collection<PessoaJuridica> pessoaJuridicaCollectionOld = persistentPessoa.getPessoaJuridicaCollection();
-            Collection<PessoaJuridica> pessoaJuridicaCollectionNew = pessoa.getPessoaJuridicaCollection();
-            Collection<PessoaFisica> pessoaFisicaCollectionOld = persistentPessoa.getPessoaFisicaCollection();
-            Collection<PessoaFisica> pessoaFisicaCollectionNew = pessoa.getPessoaFisicaCollection();
             Collection<Movimentacao> movimentacaoCollectionOld = persistentPessoa.getMovimentacaoCollection();
             Collection<Movimentacao> movimentacaoCollectionNew = pessoa.getMovimentacaoCollection();
-            List<String> illegalOrphanMessages = null;
-            for (PessoaJuridica pessoaJuridicaCollectionOldPessoaJuridica : pessoaJuridicaCollectionOld) {
-                if (!pessoaJuridicaCollectionNew.contains(pessoaJuridicaCollectionOldPessoaJuridica)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain PessoaJuridica " + pessoaJuridicaCollectionOldPessoaJuridica + " since its idPessoa field is not nullable.");
-                }
-            }
-            for (PessoaFisica pessoaFisicaCollectionOldPessoaFisica : pessoaFisicaCollectionOld) {
-                if (!pessoaFisicaCollectionNew.contains(pessoaFisicaCollectionOldPessoaFisica)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain PessoaFisica " + pessoaFisicaCollectionOldPessoaFisica + " since its idPessoa field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            Collection<PessoaJuridica> attachedPessoaJuridicaCollectionNew = new ArrayList<PessoaJuridica>();
-            for (PessoaJuridica pessoaJuridicaCollectionNewPessoaJuridicaToAttach : pessoaJuridicaCollectionNew) {
-                pessoaJuridicaCollectionNewPessoaJuridicaToAttach = em.getReference(pessoaJuridicaCollectionNewPessoaJuridicaToAttach.getClass(), pessoaJuridicaCollectionNewPessoaJuridicaToAttach.getIdPessoaJuridica());
-                attachedPessoaJuridicaCollectionNew.add(pessoaJuridicaCollectionNewPessoaJuridicaToAttach);
-            }
-            pessoaJuridicaCollectionNew = attachedPessoaJuridicaCollectionNew;
-            pessoa.setPessoaJuridicaCollection(pessoaJuridicaCollectionNew);
-            Collection<PessoaFisica> attachedPessoaFisicaCollectionNew = new ArrayList<PessoaFisica>();
-            for (PessoaFisica pessoaFisicaCollectionNewPessoaFisicaToAttach : pessoaFisicaCollectionNew) {
-                pessoaFisicaCollectionNewPessoaFisicaToAttach = em.getReference(pessoaFisicaCollectionNewPessoaFisicaToAttach.getClass(), pessoaFisicaCollectionNewPessoaFisicaToAttach.getIdPessoaFisica());
-                attachedPessoaFisicaCollectionNew.add(pessoaFisicaCollectionNewPessoaFisicaToAttach);
-            }
-            pessoaFisicaCollectionNew = attachedPessoaFisicaCollectionNew;
-            pessoa.setPessoaFisicaCollection(pessoaFisicaCollectionNew);
             Collection<Movimentacao> attachedMovimentacaoCollectionNew = new ArrayList<Movimentacao>();
             for (Movimentacao movimentacaoCollectionNewMovimentacaoToAttach : movimentacaoCollectionNew) {
                 movimentacaoCollectionNewMovimentacaoToAttach = em.getReference(movimentacaoCollectionNewMovimentacaoToAttach.getClass(), movimentacaoCollectionNewMovimentacaoToAttach.getIdMovimento());
@@ -159,28 +81,6 @@ public class PessoaJpaController implements Serializable {
             movimentacaoCollectionNew = attachedMovimentacaoCollectionNew;
             pessoa.setMovimentacaoCollection(movimentacaoCollectionNew);
             pessoa = em.merge(pessoa);
-            for (PessoaJuridica pessoaJuridicaCollectionNewPessoaJuridica : pessoaJuridicaCollectionNew) {
-                if (!pessoaJuridicaCollectionOld.contains(pessoaJuridicaCollectionNewPessoaJuridica)) {
-                    Pessoa oldIdPessoaOfPessoaJuridicaCollectionNewPessoaJuridica = pessoaJuridicaCollectionNewPessoaJuridica.getIdPessoa();
-                    pessoaJuridicaCollectionNewPessoaJuridica.setIdPessoa(pessoa);
-                    pessoaJuridicaCollectionNewPessoaJuridica = em.merge(pessoaJuridicaCollectionNewPessoaJuridica);
-                    if (oldIdPessoaOfPessoaJuridicaCollectionNewPessoaJuridica != null && !oldIdPessoaOfPessoaJuridicaCollectionNewPessoaJuridica.equals(pessoa)) {
-                        oldIdPessoaOfPessoaJuridicaCollectionNewPessoaJuridica.getPessoaJuridicaCollection().remove(pessoaJuridicaCollectionNewPessoaJuridica);
-                        oldIdPessoaOfPessoaJuridicaCollectionNewPessoaJuridica = em.merge(oldIdPessoaOfPessoaJuridicaCollectionNewPessoaJuridica);
-                    }
-                }
-            }
-            for (PessoaFisica pessoaFisicaCollectionNewPessoaFisica : pessoaFisicaCollectionNew) {
-                if (!pessoaFisicaCollectionOld.contains(pessoaFisicaCollectionNewPessoaFisica)) {
-                    Pessoa oldIdPessoaOfPessoaFisicaCollectionNewPessoaFisica = pessoaFisicaCollectionNewPessoaFisica.getIdPessoa();
-                    pessoaFisicaCollectionNewPessoaFisica.setIdPessoa(pessoa);
-                    pessoaFisicaCollectionNewPessoaFisica = em.merge(pessoaFisicaCollectionNewPessoaFisica);
-                    if (oldIdPessoaOfPessoaFisicaCollectionNewPessoaFisica != null && !oldIdPessoaOfPessoaFisicaCollectionNewPessoaFisica.equals(pessoa)) {
-                        oldIdPessoaOfPessoaFisicaCollectionNewPessoaFisica.getPessoaFisicaCollection().remove(pessoaFisicaCollectionNewPessoaFisica);
-                        oldIdPessoaOfPessoaFisicaCollectionNewPessoaFisica = em.merge(oldIdPessoaOfPessoaFisicaCollectionNewPessoaFisica);
-                    }
-                }
-            }
             for (Movimentacao movimentacaoCollectionOldMovimentacao : movimentacaoCollectionOld) {
                 if (!movimentacaoCollectionNew.contains(movimentacaoCollectionOldMovimentacao)) {
                     movimentacaoCollectionOldMovimentacao.setIdPessoa(null);
@@ -215,7 +115,7 @@ public class PessoaJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -226,24 +126,6 @@ public class PessoaJpaController implements Serializable {
                 pessoa.getIdPessoa();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The pessoa with id " + id + " no longer exists.", enfe);
-            }
-            List<String> illegalOrphanMessages = null;
-            Collection<PessoaJuridica> pessoaJuridicaCollectionOrphanCheck = pessoa.getPessoaJuridicaCollection();
-            for (PessoaJuridica pessoaJuridicaCollectionOrphanCheckPessoaJuridica : pessoaJuridicaCollectionOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Pessoa (" + pessoa + ") cannot be destroyed since the PessoaJuridica " + pessoaJuridicaCollectionOrphanCheckPessoaJuridica + " in its pessoaJuridicaCollection field has a non-nullable idPessoa field.");
-            }
-            Collection<PessoaFisica> pessoaFisicaCollectionOrphanCheck = pessoa.getPessoaFisicaCollection();
-            for (PessoaFisica pessoaFisicaCollectionOrphanCheckPessoaFisica : pessoaFisicaCollectionOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Pessoa (" + pessoa + ") cannot be destroyed since the PessoaFisica " + pessoaFisicaCollectionOrphanCheckPessoaFisica + " in its pessoaFisicaCollection field has a non-nullable idPessoa field.");
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Collection<Movimentacao> movimentacaoCollection = pessoa.getMovimentacaoCollection();
             for (Movimentacao movimentacaoCollectionMovimentacao : movimentacaoCollection) {

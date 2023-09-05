@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package controller;
 
@@ -17,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
 import model.Produto;
 
 /**
@@ -188,17 +186,5 @@ public class ProdutoJpaController implements Serializable {
             em.close();
         }
     }
-
-     public List<Produto> getListaProdutos() {
-    EntityManager em = getEntityManager();
-    try {
-        CriteriaQuery<Produto> cq = em.getCriteriaBuilder().createQuery(Produto.class);
-        cq.select(cq.from(Produto.class));
-        TypedQuery<Produto> query = em.createQuery(cq);
-        return query.getResultList();
-    } finally {
-        em.close();
-    }
-}
     
 }
