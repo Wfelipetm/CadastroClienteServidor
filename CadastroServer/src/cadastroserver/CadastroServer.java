@@ -275,3 +275,105 @@ public class CadastroServer {
 
 
 */
+
+/*
+
+package cadastroserver;
+
+import controller.ProdutoJpaController;
+import controller.UsuarioJpaController;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.List;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import model.Produto;
+
+public class CadastroServer {
+    private static final int PORT = 12345; // Porta do servidor
+    private static final String CORRECT_USERNAME = "a";
+    private static final String CORRECT_PASSWORD = "123";
+
+    public static void main(String[] args) {
+        System.out.println("Servidor CadastroServer iniciado.");
+
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            while (true) {
+                System.out.println("Aguardando conexão de cliente...");
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Cliente conectado.");
+
+                // Cria uma thread para lidar com o cliente
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                Thread thread = new Thread(clientHandler);
+                thread.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class ClientHandler implements Runnable {
+        private final Socket socket;
+        private final ProdutoJpaController produtoController;
+
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+            // Inicializa o controlador de ProdutoJpaController para buscar produtos do banco de dados
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("CadastroServerPU");
+            produtoController = new ProdutoJpaController(emf);
+        }
+
+        @Override
+        public void run() {
+            try (
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
+            ) {
+                // Autenticação
+                String username = in.readLine();
+                String password = in.readLine();
+
+                if (validateCredentials(username, password)) {
+                    out.println("Autenticação bem-sucedida. Aguardando comandos...");
+                    while (true) {
+                        String command = in.readLine();
+                        if (command != null && command.equals("L")) {
+                            // Enviar conjunto de produtos do banco de dados
+                            sendProductList(out);
+                        }
+                    }
+                } else {
+                    out.println("Credenciais inválidas. Conexão encerrada.");
+                    socket.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private boolean validateCredentials(String username, String password) {
+            return username.equals(CORRECT_USERNAME) && password.equals(CORRECT_PASSWORD);
+        }
+
+        private void sendProductList(PrintWriter out) {
+    List<Produto> productList = produtoController.getListaProdutos();
+    out.println("Conjunto de produtos disponíveis:");
+
+    for (Produto product : productList) {
+        out.println(product.getNome());
+    }
+
+    // Adicione uma linha em branco para indicar o fim da lista
+    out.println();
+}
+
+    }
+}
+
+
+*/
