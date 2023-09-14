@@ -1,25 +1,19 @@
 package cadastroclientv2;
-
 import java.io.*;
 import java.net.*;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import model.Produto;
 
+/*
 
-/**
- *
- * @author Windows 10
+ Autor: Wallace Tavares
+
  */
 public class CadastroClientV2 {
-    private static final int PORT = 12345;
     public static void main(String[] args) {
         
         try {
-            Socket socket = new Socket("localhost",PORT);
-           // Socket socket = new Socket("localhost", 12345);
+            Socket socket = new Socket("localhost", 12345);
 
             ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
@@ -29,23 +23,6 @@ public class CadastroClientV2 {
             // Enviar login e senha para o servidor 
             saida.writeObject("op2"); // login
             saida.writeObject("op2"); // senha
-	    
-	    // Instancie a janela para mensagens CODIGO NAO FUNCIONAL...corrigir erros
-	   /* 
-	    JFrame frame = new JFrame();
-	    SaidaFrame saidaFrame = new SaidaFrame(frame);
-	    saidaFrame.setVisible(true);
-
-	    // Crie um JTextArea na janela para exibir as mensagens
-	    JTextArea textArea = new JTextArea();
-	    saidaFrame.add(new JScrollPane(textArea));
-
-	    // Instancie a Thread para preenchimento assíncrono (Passo 5)
-	    //  canal de entrada do Socket e o JTextArea para a Thread
-	    ThreadClient threadClient = new ThreadClient(entrada, textArea);
-	    threadClient.start();
-		*/
-           
 	    
             while (true) {
                 System.out.println("Menu:");
@@ -118,7 +95,6 @@ public class CadastroClientV2 {
             entrada.close();
             socket.close();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 }
