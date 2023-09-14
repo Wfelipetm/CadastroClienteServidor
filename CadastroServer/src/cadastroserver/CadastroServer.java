@@ -13,20 +13,20 @@ import javax.persistence.Persistence;
 public class CadastroServer {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("CadastroServerPU");
-        ProdutoJpaController ctrlProd = new ProdutoJpaController(emf);
-        UsuarioJpaController ctrlUsu = new UsuarioJpaController(emf);
-        MovimentacaoJpaController ctrlMov = new MovimentacaoJpaController(emf);
+        ProdutoJpaController ctrlProduto = new ProdutoJpaController(emf);
+        UsuarioJpaController ctrlUsuario = new UsuarioJpaController(emf);
+        MovimentacaoJpaController ctrlMovimento = new MovimentacaoJpaController(emf);
         PessoaJpaController ctrlPessoa = new PessoaJpaController(emf);
 	
         ServerSocket servidorSocket = null;
 
         try {
             servidorSocket = new ServerSocket(12345);
-            System.out.println("Servidor aguardando conexões na porta 4321 v2...");
+            System.out.println("Servidor aguardando conexões na porta 12345 ...");
 
             while (true) {
                 Socket clienteSocket = servidorSocket.accept();
-                CadastroThread thread = new CadastroThread(ctrlProd, ctrlUsu, ctrlMov, ctrlPessoa, clienteSocket);
+                CadastroThread thread = new CadastroThread(ctrlProduto, ctrlUsuario, ctrlMovimento, ctrlPessoa, clienteSocket);
                 thread.start();
             }
         } catch (IOException e) {

@@ -20,19 +20,19 @@ import model.Produto;
 import model.Usuario;
 
 public class CadastroThread extends Thread {
-    private ProdutoJpaController ctrlProd;
-    private UsuarioJpaController ctrlUsu;
-    private MovimentacaoJpaController ctrlMov;
+    private ProdutoJpaController ctrlProduto;
+    private UsuarioJpaController ctrlUsuario;
+    private MovimentacaoJpaController ctrlMovimento;
     private PessoaJpaController ctrlPessoa;
-    private Socket s1;
+    private Socket soc1;
     
-    public CadastroThread(ProdutoJpaController ctrlProd, UsuarioJpaController ctrlUsu, 
-                            MovimentacaoJpaController ctrlMov, PessoaJpaController ctrlPessoa, Socket s1) {
-        this.ctrlProd = ctrlProd;
-        this.ctrlUsu = ctrlUsu;
-        this.ctrlMov = ctrlMov;
+    public CadastroThread(ProdutoJpaController ctrlProduto, UsuarioJpaController ctrlUsuario, 
+                            MovimentacaoJpaController ctrlMovimento, PessoaJpaController ctrlPessoa, Socket soc1) {
+        this.ctrlProduto = ctrlProduto;
+        this.ctrlUsuario = ctrlUsuario;
+        this.ctrlMovimento = ctrlMovimento;
         this.ctrlPessoa = ctrlPessoa;
-        this.s1 = s1;
+        this.soc1 = soc1;
     }
 
     // ...
@@ -40,15 +40,15 @@ public class CadastroThread extends Thread {
     @Override
     public void run() {
 	try (
-	    ObjectOutputStream saida = new ObjectOutputStream(s1.getOutputStream());
-	    ObjectInputStream entrada = new ObjectInputStream(s1.getInputStream())
+	    ObjectOutputStream saida = new ObjectOutputStream(soc1.getOutputStream());
+	    ObjectInputStream entrada = new ObjectInputStream(soc1.getInputStream())
 	) {
 	    // Obter o login e a senha a partir da entrada
 	    String login = (String) entrada.readObject();
 	    String senha = (String) entrada.readObject();
 
-	    // Utilizar ctrlUsu para verificar o login
-	    Usuario usuario = ctrlUsu.findUsuariosenha(login, senha);
+	    // Utilizar ctrlUsuario para verificar o login
+	    Usuario usuario = ctrlUsuario.findUsuariosenha(login, senha);
 
 	    if (usuario == null) {
 		// Se o usuário for nulo, encerrar a conexão
@@ -62,8 +62,8 @@ public class CadastroThread extends Thread {
 		String comando = (String) entrada.readObject();
 
 		if ("L".equals(comando)) {
-		    // Utilizar ctrlProd para retornar o conjunto de produtos através da saída
-		    List<Produto> produtos = ctrlProd.findProdutoEntities();
+		    // Utilizar ctrlProduto para retornar o conjunto de produtos através da saída
+		    List<Produto> produtos = ctrlProduto.findProdutoEntities();
 		    saida.writeObject(produtos);
 		    
 		} else if ("E".equalsIgnoreCase(comando)) {
@@ -88,7 +88,7 @@ public class CadastroThread extends Thread {
 		Logger.getLogger(CadastroThread.class.getName()).log(Level.SEVERE, null, ex);
 	    } finally {
 		try {
-		    s1.close();
+		    soc1.close();
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
@@ -109,7 +109,7 @@ public class CadastroThread extends Thread {
 
 	// Obtenha as entidades Pessoa e Produto usando os controladores correspondentes
 	Pessoa pessoa = ctrlPessoa.findPessoa(idPessoa);
-	Produto produto = ctrlProd.findProduto(idProduto);
+	Produto produto = ctrlProduto.findProduto(idProduto);
 
 	// Verifique se as entidades foram encontradas
 	if (pessoa == null || produto == null) {
@@ -136,7 +136,7 @@ public class CadastroThread extends Thread {
 
 		// Atualize a quantidade do produto
 		produto.setQuantidade(novaQuantidade);
-		ctrlProd.edit(produto);
+		ctrlProduto.edit(produto);
 
 		
 	    } catch (Exception ex) {
@@ -146,7 +146,7 @@ public class CadastroThread extends Thread {
 	    }
 	try{
 		// Persista o movimento
-		ctrlMov.create(movimento);
+		ctrlMovimento.create(movimento);
 		return true;
 		}catch (Exception ex) {
 		System.out.println("Erro ao realizar a persistencia em movimento.");
@@ -169,7 +169,7 @@ public class CadastroThread extends Thread {
 
 	// Obtenha as entidades Pessoa e Produto usando os controladores correspondentes
 	Pessoa pessoa = ctrlPessoa.findPessoa(idPessoa);
-	Produto produto = ctrlProd.findProduto(idProduto);
+	Produto produto = ctrlProduto.findProduto(idProduto);
 
 	// Verifique se as entidades foram encontradas
 	if (pessoa == null || produto == null) {
@@ -198,7 +198,7 @@ public class CadastroThread extends Thread {
 	    try {
 		// Atualize a quantidade do produto
 		produto.setQuantidade(novaQuantidade);
-		ctrlProd.edit(produto);
+		ctrlProduto.edit(produto);
 
 		
 	    } catch (Exception ex) {
@@ -208,7 +208,7 @@ public class CadastroThread extends Thread {
 	    }
 	    try{
 		// Persista o movimento
-		ctrlMov.create(movimento);
+		ctrlMovimento.create(movimento);
 		return true;
 		}catch (Exception ex) {
 		System.out.println("Erro ao realizar a persistencia em movimento.");
@@ -253,24 +253,24 @@ import model.Produto;
 
 
 public class CadastroThread extends Thread {
-    private final ProdutoJpaController ctrlProduto;
-    private final UsuarioJpaController ctrlUsuario;
+    private final ProdutoJpaController ctrlProdutouto;
+    private final UsuarioJpaController ctrlUsuarioario;
     private final PessoaJpaController ctrlPessoa;
-    private final MovimentacaoJpaController ctrlMovimento;
+    private final MovimentacaoJpaController ctrlMovimentoimento;
     private final Socket socket;
     private volatile boolean isRunning = true; // Variável de controle para encerrar a thread
 
     public CadastroThread(
-        ProdutoJpaController ctrlProduto,
-        UsuarioJpaController ctrlUsuario,
+        ProdutoJpaController ctrlProdutouto,
+        UsuarioJpaController ctrlUsuarioario,
         PessoaJpaController ctrlPessoa,
-        MovimentacaoJpaController ctrlMovimento,
+        MovimentacaoJpaController ctrlMovimentoimento,
         Socket socket
     ) {
-        this.ctrlProduto = ctrlProduto;
-        this.ctrlUsuario = ctrlUsuario;
+        this.ctrlProdutouto = ctrlProdutouto;
+        this.ctrlUsuarioario = ctrlUsuarioario;
         this.ctrlPessoa = ctrlPessoa;
-        this.ctrlMovimento = ctrlMovimento;
+        this.ctrlMovimentoimento = ctrlMovimentoimento;
         this.socket = socket;
     }
 
@@ -322,12 +322,12 @@ public class CadastroThread extends Thread {
 
     private boolean validateCredentials(String username, String password) {
         // Adicione sua lógica de validação de credenciais aqui
-        // Você pode usar ctrlUsuario para verificar as credenciais do usuário no banco de dados
+        // Você pode usar ctrlUsuarioario para verificar as credenciais do usuário no banco de dados
         return true; // Temporariamente, retorna true para fins de teste
     }
 
     private void sendProductList(ObjectOutputStream out) throws IOException {
-        List<Produto> productList = ctrlProduto.findProdutoEntities();
+        List<Produto> productList = ctrlProdutouto.findProdutoEntities();
         out.writeObject("Conjunto de produtos disponíveis:");
 
         for (Produto product : productList) {
@@ -350,7 +350,7 @@ public class CadastroThread extends Thread {
             double unitPrice = Double.parseDouble(unitPriceStr);
 
             Pessoa person = ctrlPessoa.findPessoa(personId);
-            Produto product = ctrlProduto.findProduto(productId);
+            Produto product = ctrlProdutouto.findProduto(productId);
 
             if (person != null && product != null) {
                 // Verificar a quantidade disponível para saída
@@ -365,8 +365,8 @@ public class CadastroThread extends Thread {
                     movement.setValorUnitario(unitPrice);
                     movement.setTipo(type);
 
-                    // Persistir o movimento usando o novo controlador ctrlMovimento
-                    ctrlMovimento.create(movement);
+                    // Persistir o movimento usando o novo controlador ctrlMovimentoimento
+                    ctrlMovimentoimento.create(movement);
 
                     // Atualizar a quantidade do produto de acordo com o tipo de movimento
                     if (type.equals("E")) {
@@ -374,7 +374,7 @@ public class CadastroThread extends Thread {
                     } else if (type.equals("S")) {
                         product.setQuantidade(product.getQuantidade() - quantity);
                     }
-                    ctrlProduto.edit(product);
+                    ctrlProdutouto.edit(product);
 
                     out.writeObject("Operação concluída com sucesso.");
                 }
