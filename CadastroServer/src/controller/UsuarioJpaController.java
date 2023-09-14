@@ -18,6 +18,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import model.Usuario;
 
 /**
@@ -143,6 +144,24 @@ public class UsuarioJpaController implements Serializable {
         }
     }
 
+    public Usuario findUsuariosenha(String login, String senha) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Usuario> query = em.createQuery(
+                "SELECT u FROM Usuario u WHERE u.login = :login AND u.senha = :senha"
+, Usuario.class);
+            
+
+            query.setParameter("login", login);
+            query.setParameter("senha", senha);
+            return query.getSingleResult(); // Retorna o usuário se encontrado
+        } catch (NoResultException e) {
+            return null; // Retorna null se não encontrar um usuário com as credenciais
+        } finally {
+            em.close();
+            
+        }
+    }
     public List<Usuario> findUsuarioEntities() {
         return findUsuarioEntities(true, -1, -1);
     }
@@ -189,19 +208,6 @@ public class UsuarioJpaController implements Serializable {
         }
     }
     
-    public Usuario findUsuario(String login, String senha) {
-    EntityManager em = getEntityManager();
-    try {
-        Query query = em.createQuery("SELECT u FROM Usuario u WHERE u.login = :login AND u.senha = :senha");
-        query.setParameter("login", login);
-        query.setParameter("senha", senha);
-
-        return (Usuario) query.getSingleResult();
-    } catch (NoResultException e) {
-        return null; // Retorna null se nenhum usuário for encontrado com as credenciais fornecidas
-    } finally {
-        em.close();
-    }
-}
+  
     
 }

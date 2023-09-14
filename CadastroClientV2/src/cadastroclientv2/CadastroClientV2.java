@@ -1,94 +1,124 @@
 package cadastroclientv2;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
+import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import model.Produto;
 
+
+/**
+ *
+ * @author Windows 10
+ */
 public class CadastroClientV2 {
-    private static final String SERVER_ADDRESS = "localhost";
-    private static final int SERVER_PORT = 12345;
-    //private static final int SERVER_PORT = 4321; // Porta do servidor
-
+    private static final int PORT = 12345;
     public static void main(String[] args) {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+        
+        try {
+            Socket socket = new Socket("localhost",PORT);
+           // Socket socket = new Socket("localhost", 12345);
 
-            System.out.println("Conectado ao servidor CadastroServer.");
-            System.out.print("Digite seu nome de usuário: ");
-            String username = consoleInput();
-            System.out.print("Digite sua senha: ");
-            String password = consoleInput();
+            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
 
-            out.println(username);
-            out.println(password);
+            BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
 
-            String response = in.readLine();
-            System.out.println(response);
+            // Enviar login e senha para o servidor 
+            saida.writeObject("op2"); // login
+            saida.writeObject("op2"); // senha
+	    
+	    // Instancie a janela para mensagens CODIGO NAO FUNCIONAL...corrigir erros
+	   /* 
+	    JFrame frame = new JFrame();
+	    SaidaFrame saidaFrame = new SaidaFrame(frame);
+	    saidaFrame.setVisible(true);
 
-            if (response.equals("Autenticação bem-sucedida. Aguardando comandos...")) {
-                while (true) {
-                    printMenu();
-                    String command = consoleInput();
-                    out.println(command);
+	    // Crie um JTextArea na janela para exibir as mensagens
+	    JTextArea textArea = new JTextArea();
+	    saidaFrame.add(new JScrollPane(textArea));
 
-                    if (command.equalsIgnoreCase("X")) {
-                        break;
-                    } else if (command.equalsIgnoreCase("L")) {
-                        // Receba e exiba todos os produtos de uma vez
-                        receiveAndDisplayProductList(in);
-                    } else if (command.equalsIgnoreCase("E") || command.equalsIgnoreCase("S")) {
-                        System.out.print("Informe o Id da pessoa: ");
-                        String personId = consoleInput();
-                        out.println(personId);
+	    // Instancie a Thread para preenchimento assíncrono (Passo 5)
+	    //  canal de entrada do Socket e o JTextArea para a Thread
+	    ThreadClient threadClient = new ThreadClient(entrada, textArea);
+	    threadClient.start();
+		*/
+           
+	    
+            while (true) {
+                System.out.println("Menu:");
+                System.out.println("L - Listar");
+                System.out.println("X - Finalizar");
+                System.out.println("E - Entrada");
+                System.out.println("S - Saída");
 
-                        System.out.print("Informe o Id do produto: ");
-                        String productId = consoleInput();
-                        out.println(productId);
+                System.out.print("Escolha uma opção: ");
+                String comando = teclado.readLine();
 
-                        System.out.print("Informe a quantidade: ");
-                        String quantity = consoleInput();
-                        out.println(quantity);
+                if (comando.equalsIgnoreCase("L")) {
+                    // Envie o comando "L" para o servidor
+		    saida.writeObject("L");
+		    // Receba e exiba a resposta do servidor (lista de produtos)
+		    Object resposta = entrada.readObject();
+		    if (resposta instanceof List) {
+			List<Produto> produtos = (List<Produto>) resposta;
+			System.out.println("Lista de produtos: ");
 
-                        System.out.print("Informe o valor unitário: ");
-                        String unitPrice = consoleInput();
-                        out.println(unitPrice);
-                    } else {
-                        System.out.println("Comando inválido.");
-                    }
+			for (Produto produto : produtos) {
+			    System.out.println("ID: " + produto.getIdProduto());
+			    System.out.println("Nome: " + produto.getNome());
+			    System.out.println("Preço: " + produto.getPrecoVenda());
+			    System.out.println("Quantidade: " + produto.getQuantidade());
+			    System.out.println("---------------------------");
+			}
+		    } else {
+			System.out.println("Resposta do servidor não é uma lista de produtos.");
+		    }
+
+                } else if (comando.equalsIgnoreCase("X")) {
+		    saida.writeObject("X");
+		    Object resposta = entrada.readObject();
+		    System.out.println(resposta);
+                    break;
+                } else if (comando.equalsIgnoreCase("E") || comando.equalsIgnoreCase("S")) {
+                    // Envie o comando (E ou S) para o servidor
+                    saida.writeObject(comando);
+
+                    // Obtenha os dados da pessoa, produto, quantidade e valor unitário via teclado
+                    System.out.print("ID da pessoa: ");
+                    int idPessoa = Integer.parseInt(teclado.readLine());
+
+                    System.out.print("ID do produto: ");
+                    int idProduto = Integer.parseInt(teclado.readLine());
+
+                    System.out.print("Quantidade: ");
+                    int quantidade = Integer.parseInt(teclado.readLine());
+
+                    System.out.print("Valor unitário: ");
+                    double valorUnitario = Double.parseDouble(teclado.readLine());
+		    
+                    // Envie os dados para o servidor
+                    saida.writeObject(idPessoa);
+                    saida.writeObject(idProduto);
+                    saida.writeObject(quantidade);
+                    saida.writeObject(valorUnitario);
+		    
+
+                    // Receba a resposta do servidor e exiba-a 
+                    Object resposta = entrada.readObject();
+		    
+                    System.out.println(resposta);
                 }
             }
-        } catch (IOException e) {
+
+            // Feche os recursos
+            saida.close();
+            entrada.close();
+            socket.close();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static void printMenu() {
-        System.out.println("Menu:");
-        System.out.println("L – Listar");
-        System.out.println("X – Finalizar");
-        System.out.println("E – Entrada");
-        System.out.println("S – Saída");
-        System.out.print("Escolha uma opção: ");
-    }
-
-    private static String consoleInput() {
-        BufferedReader consoleIn = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            return consoleIn.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    private static void receiveAndDisplayProductList(BufferedReader in) throws IOException {
-        System.out.println("Conjunto de produtos disponíveis:");
-        String line;
-        while ((line = in.readLine()) != null && !line.isEmpty()) {
-            System.out.println(line);
         }
     }
 }

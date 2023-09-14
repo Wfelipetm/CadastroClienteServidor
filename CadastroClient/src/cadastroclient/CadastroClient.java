@@ -1,61 +1,43 @@
 package cadastroclient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
+import model.Produto;
 
 public class CadastroClient {
-
-    private static final String SERVER_ADDRESS = "localhost"; // Endereço do servidor
-    //private static final int SERVER_PORT = 4321; // Porta do servidor
-    private static final int SERVER_PORT = 12345;
-
     public static void main(String[] args) {
-        try (
-                Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader consoleIn = new BufferedReader(new InputStreamReader(System.in))) {
-            System.out.println("Conectado ao servidor CadastroServer.");
-            System.out.print("Digite seu nome de usuário: ");
-            String username = consoleIn.readLine();
-            System.out.print("Digite sua senha: ");
-            String password = consoleIn.readLine();
+        String servidorIP = "localhost";
+        int servidorPorta = 12345;
 
-            out.println(username);
-            out.println(password);
+        try (Socket clienteSocket = new Socket(servidorIP, servidorPorta);
+             ObjectOutputStream saida = new ObjectOutputStream(clienteSocket.getOutputStream());
+             ObjectInputStream entrada = new ObjectInputStream(clienteSocket.getInputStream())) {
 
-            String response = in.readLine();
-            System.out.println(response);
+            // Escrever o login e a senha na saída 
+            saida.writeObject("op1"); // Login
+            saida.writeObject("op1"); // Senha
 
-            if (response.equals("Autenticação bem-sucedida. Aguardando comandos...")) {
-                while (true) {
-                    System.out.print("Digite 'L' para listar produtos ou 'S' para sair: ");
-                    String command = consoleIn.readLine();
-                    out.println(command);
+            // Enviar o comando "L" no canal de saída
+            saida.writeObject("L");
 
-                    if (command.equalsIgnoreCase("S")) {
-                        break;
-                    }
+            // Receber a coleção de entidades no canal de entrada
+            List<Produto> produtos = (List<Produto>) entrada.readObject();
 
-                    if (command.equalsIgnoreCase("L")) {
-                        // Receba e exiba todos os produtos de uma vez
-                        receiveAndDisplayProductList(in);
-                    }
-                }
-            }
-        } catch (IOException e) {
+            // Apresentar o nome de cada entidade recebida
+            System.out.println("Produtos:");
+            for (Produto produto : produtos) {
+			    System.out.println("ID: " + produto.getIdProduto());
+			    System.out.println("Nome: " + produto.getNome());
+			    System.out.println("Preço: " + produto.getPrecoVenda());
+			    System.out.println("Quantidade: " + produto.getQuantidade());
+			    System.out.println("---------------------------");
+			}
+
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static void receiveAndDisplayProductList(BufferedReader in) throws IOException {
-        System.out.println("Conjunto de produtos disponíveis:");
-        String line;
-        while ((line = in.readLine()) != null && !line.isEmpty()) {
-            System.out.println(line);
         }
     }
 }

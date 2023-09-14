@@ -3,6 +3,68 @@ package cadastroserver;
 import controller.MovimentacaoJpaController;
 import controller.PessoaJpaController;
 import controller.ProdutoJpaController;
+import controller.UsuarioJpaController;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+public class CadastroServer {
+    public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("CadastroServerPU");
+        ProdutoJpaController ctrlProd = new ProdutoJpaController(emf);
+        UsuarioJpaController ctrlUsu = new UsuarioJpaController(emf);
+        MovimentacaoJpaController ctrlMov = new MovimentacaoJpaController(emf);
+        PessoaJpaController ctrlPessoa = new PessoaJpaController(emf);
+	
+        ServerSocket servidorSocket = null;
+
+        try {
+            servidorSocket = new ServerSocket(12345);
+            System.out.println("Servidor aguardando conexões na porta 4321 v2...");
+
+            while (true) {
+                Socket clienteSocket = servidorSocket.accept();
+                CadastroThread thread = new CadastroThread(ctrlProd, ctrlUsu, ctrlMov, ctrlPessoa, clienteSocket);
+                thread.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (servidorSocket != null && !servidorSocket.isClosed()) {
+                try {
+                    servidorSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import controller.MovimentacaoJpaController;
+import controller.PessoaJpaController;
+import controller.ProdutoJpaController;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,8 +79,10 @@ import model.Pessoa;
 import model.Produto;
 
 public class CadastroServer {
-    //private static final int PORT = 4321; // Porta do servidor
-   private static final int PORT = 12345; 
+
+    private static final int PORT = 12345;
+    private static final String CORRECT_USERNAME = "op1";
+    private static final String CORRECT_PASSWORD = "op1";
 
     public static void main(String[] args) {
         System.out.println("Servidor CadastroServer iniciado.");
@@ -46,6 +110,7 @@ public class CadastroServer {
     }
 
     private static class ClientHandler implements Runnable {
+
         private final Socket socket;
         private final ProdutoJpaController produtoController;
         private final MovimentacaoJpaController movimentoController;
@@ -65,8 +130,10 @@ public class CadastroServer {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
             ) {
                 // Autenticação
-                String username = in.readLine();
-                String password = in.readLine();
+                String username = in.readLine().trim();
+                String password = in.readLine().trim();
+                System.out.println("Username: " + username);
+                System.out.println("Password: " + password);
 
                 if (validateCredentials(username, password)) {
                     out.println("Autenticação bem-sucedida. Aguardando comandos...");
@@ -97,9 +164,7 @@ public class CadastroServer {
         }
 
         private boolean validateCredentials(String username, String password) {
-            // Adicione sua lógica de validação de credenciais aqui
-            // Você pode usar ctrlUsuario para verificar as credenciais do usuário no banco de dados
-            return true; // Temporariamente, retorna true para fins de teste
+            return CORRECT_USERNAME.equals(username) && CORRECT_PASSWORD.equals(password);
         }
 
         private void sendProductList(PrintWriter out) {
@@ -133,7 +198,7 @@ public class CadastroServer {
                     // Verificar a quantidade disponível para saída
                     if (type.equals("S") && product.getQuantidade() < quantity) {
                         out.println("Quantidade insuficiente para saída. Operação cancelada.");
-                                            } else {
+                    } else {
                         // Criar o objeto Movimento
                         Movimentacao movement = new Movimentacao();
                         movement.setIdPessoa(person);
@@ -165,18 +230,7 @@ public class CadastroServer {
     }
 }
 
-                   
-
-
-
-
-
-
-
-
-
-
-/*package cadastroserver;
+package cadastroserver;
 
 import controller.ProdutoJpaController;
 import controller.UsuarioJpaController;
@@ -259,7 +313,7 @@ public class CadastroServer {
         }
 
         private void sendProductList(PrintWriter out) {
-    List<Produto> productList = produtoController.getListaProdutos();
+    List<Produto> productList = produtoController.getListaProduto();
     out.println("Conjunto de produtos disponíveis:");
 
     for (Produto product : productList) {
@@ -274,7 +328,7 @@ public class CadastroServer {
 }
 
 
-*/
+ */
 
 /*
 
@@ -361,7 +415,7 @@ public class CadastroServer {
         }
 
         private void sendProductList(PrintWriter out) {
-    List<Produto> productList = produtoController.getListaProdutos();
+    List<Produto> productList = produtoController.getListaProduto();
     out.println("Conjunto de produtos disponíveis:");
 
     for (Produto product : productList) {
