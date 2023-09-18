@@ -4,24 +4,29 @@
  1º procedimento   
 
  
- ![image](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/7255fe2d-8b52-4436-838c-e98c75c3de58)
+
+![1](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/af75e90e-526a-4323-bec4-a7e3beba0d6e)
 
 
  2º procedimento 
 
  
- ![image](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/158a506e-1965-4416-9784-173b68a7a82c)
+![2](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/c8738f2d-372e-4930-97f9-f234d4da53d7)
+
  
 --------------------------------------------------------------------------------------------------------------------
 
-![image](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/d663fdbd-712e-4086-a938-e0c493923c75)
+![3](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/2095b81a-138f-4c89-ba3e-598089c037db)
+
 
 # Banco de Dados
 
-Movimento
+Movimento 
 
-![image](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/e99d83be-87c6-48d6-880f-1ecd22200448)
+![4](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/7febe37f-1b5a-4a11-be84-7999b1c27612)
+
 
 # Saida Frame
 
-![image](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/bdc15b1f-2f14-475b-9ae1-2fc984f947f4)
+![5](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/dca42871-e69b-444d-be30-0dbe364de1c2)
+
