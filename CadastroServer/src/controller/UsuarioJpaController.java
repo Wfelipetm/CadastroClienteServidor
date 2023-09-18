@@ -20,6 +20,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import model.Usuario;
+import static model.Usuario_.login;
+import static model.Usuario_.senha;
 
 /**
  *
@@ -186,10 +188,15 @@ public class UsuarioJpaController implements Serializable {
         }
     }
 
-    public Usuario findUsuario(Integer id) {
+    public Usuario findUsuario(Integer login) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Usuario.class, id);
+            return em.createQuery("SELECT u FROM Usuario u WHERE u.login = :login AND u.senha = :senha", Usuario.class)
+                .setParameter("login", login)
+                .setParameter("senha", senha)
+                .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
@@ -207,6 +214,9 @@ public class UsuarioJpaController implements Serializable {
             em.close();
         }
     }
+
+   
+    
     
   
     

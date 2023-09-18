@@ -1,92 +1,93 @@
 package cadastroclientv2;
+
+import cadastroserver.SaidaFrame;
 import java.io.*;
 import java.net.*;
 import java.util.List;
 import model.Produto;
-
 /*
 
  Autor: Wallace Tavares
 
- */
+*/
+
+
 public class CadastroClientV2 {
     public static void main(String[] args) {
-        
         try {
             Socket socket = new Socket("localhost", 12345);
-
             ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
 
-            BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+            // Envie login e senha
+            saida.writeObject("op1");
+            saida.writeObject("op1");
 
-            // Enviar login e senha para o servidor 
-            saida.writeObject("op2"); // login
-            saida.writeObject("op2"); // senha
-	    
+            BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+            SaidaFrame mensagemFrame = new SaidaFrame();
+            mensagemFrame.setVisible(true);
+
             while (true) {
-                System.out.println("Menu:");
-                System.out.println("L - Listar");
-                System.out.println("X - Finalizar");
-                System.out.println("E - Entrada");
-                System.out.println("S - Saída");
+                mensagemFrame.adicionarMensagem("Menu:");
+                mensagemFrame.adicionarMensagem("L - Listar");
+                mensagemFrame.adicionarMensagem("X - Finalizar");
+                mensagemFrame.adicionarMensagem("E - Entrada");
+                mensagemFrame.adicionarMensagem("S - Saída");
 
                 System.out.print("Escolha uma opção: ");
                 String comando = teclado.readLine();
 
                 if (comando.equalsIgnoreCase("L")) {
                     // Envie o comando "L" para o servidor
-		    saida.writeObject("L");
-		    // Receba e exiba a resposta do servidor (lista de produtos)
-		    Object resposta = entrada.readObject();
-		    if (resposta instanceof List) {
-			List<Produto> produtos = (List<Produto>) resposta;
-			System.out.println("Lista de produtos: ");
+                    saida.writeObject("L");
+                    // Receba e exiba a resposta do servidor (lista de produtos)
+                    Object resposta = entrada.readObject();
+                    if (resposta instanceof List) {
+                        List<Produto> produtos = (List<Produto>) resposta;
+                        mensagemFrame.adicionarMensagem("Lista de produtos: ");
 
-			for (Produto produto : produtos) {
-			    System.out.println("ID: " + produto.getIdProduto());
-			    System.out.println("Nome: " + produto.getNome());
-			    System.out.println("Preço: " + produto.getPrecoVenda());
-			    System.out.println("Quantidade: " + produto.getQuantidade());
-			    System.out.println("---------------------------");
-			}
-		    } else {
-			System.out.println("Resposta do servidor não é uma lista de produtos.");
-		    }
+                        for (Produto produto : produtos) {
+                            mensagemFrame.adicionarMensagem("ID: " + produto.getIdProduto());
+                            mensagemFrame.adicionarMensagem("Nome: " + produto.getNome());
+                            mensagemFrame.adicionarMensagem("Preço: " + produto.getPrecoVenda());
+                            mensagemFrame.adicionarMensagem("Quantidade: " + produto.getQuantidade());
+                            mensagemFrame.adicionarMensagem("---------------------------");
+                        }
+                    } else {
+                        mensagemFrame.adicionarMensagem("Resposta do servidor não é uma lista de produtos.");
+                    }
 
                 } else if (comando.equalsIgnoreCase("X")) {
-		    saida.writeObject("X");
-		    Object resposta = entrada.readObject();
-		    System.out.println(resposta);
+                    saida.writeObject("X");
+                    Object resposta = entrada.readObject();
+                    mensagemFrame.adicionarMensagem((String) resposta);
                     break;
                 } else if (comando.equalsIgnoreCase("E") || comando.equalsIgnoreCase("S")) {
                     // Envie o comando (E ou S) para o servidor
                     saida.writeObject(comando);
 
                     // Obtenha os dados da pessoa, produto, quantidade e valor unitário via teclado
-                    System.out.print("ID da pessoa: ");
+                    mensagemFrame.adicionarMensagem("ID da pessoa: ");
                     int idPessoa = Integer.parseInt(teclado.readLine());
 
-                    System.out.print("ID do produto: ");
+                    mensagemFrame.adicionarMensagem("ID do produto: ");
                     int idProduto = Integer.parseInt(teclado.readLine());
 
-                    System.out.print("Quantidade: ");
+                    mensagemFrame.adicionarMensagem("Quantidade: ");
                     int quantidade = Integer.parseInt(teclado.readLine());
 
-                    System.out.print("Valor unitário: ");
+                    mensagemFrame.adicionarMensagem("Valor unitário: ");
                     double valorUnitario = Double.parseDouble(teclado.readLine());
-		    
+
                     // Envie os dados para o servidor
                     saida.writeObject(idPessoa);
                     saida.writeObject(idProduto);
                     saida.writeObject(quantidade);
                     saida.writeObject(valorUnitario);
-		    
 
-                    // Receba a resposta do servidor e exiba-a 
+                    // Receba a resposta do servidor e exiba-a
                     Object resposta = entrada.readObject();
-		    
-                    System.out.println(resposta);
+                    mensagemFrame.adicionarMensagem((String) resposta);
                 }
             }
 
@@ -95,6 +96,7 @@ public class CadastroClientV2 {
             entrada.close();
             socket.close();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

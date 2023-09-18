@@ -10,12 +10,12 @@ import java.net.Socket;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-
 /*
 
  Autor: Wallace Tavares
 
- */
+*/
+
 public class CadastroServer {
 
     public static void main(String[] args) {
@@ -33,17 +33,22 @@ public class CadastroServer {
 
             while (true) {
                 Socket clienteSocket = servidorSocket.accept();
+                // Aqui você cria uma nova instância da CadastroThread com os controladores
                 CadastroThread thread = new CadastroThread(ctrlProduto, ctrlUsuario, ctrlMovimento, ctrlPessoa, clienteSocket);
                 thread.start();
             }
         } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             if (servidorSocket != null && !servidorSocket.isClosed()) {
                 try {
                     servidorSocket.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 }
+
+
