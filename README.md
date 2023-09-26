@@ -1,14 +1,13 @@
-# MissaoPraticaN5_Mundo3
+
  Servidores e clientes baseados em Socket, com uso de Threads tanto no lado cliente quanto no lado servidor, acessando o banco de dados via JPA.
 
- 1º procedimento   
+  
 
  
 
 ![1](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/af75e90e-526a-4323-bec4-a7e3beba0d6e)
 
 
- 2º procedimento 
 
  
 ![2](https://github.com/Wfelipetm/MissaoPraticaN5_Mundo3/assets/108297008/c8738f2d-372e-4930-97f9-f234d4da53d7)
